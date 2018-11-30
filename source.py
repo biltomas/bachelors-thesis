@@ -95,7 +95,7 @@ class VGGNet(nn.Module):
         # print("out layer")
         out = out.reshape(out.size(0), -1)
         # print('out: ')
-        print(out.size())
+        # print(out.size())
         out = self.fc1(out)
         out = self.fc2(out)
         return out
@@ -182,7 +182,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 loss_acc = 0
 accuracy_acc = 0
-for i in range(150):
+for i in range(100):
   batch_ids = np.random.choice(trnLabels.shape[0], batch_size)
 #   print(batch_ids)
 #   batch_data = torch.from_numpy(trnData[batch_ids].transpose(0, 3, 1, 2))
@@ -211,3 +211,15 @@ for i in range(150):
              .format(i, loss_acc / view_step, accuracy_acc / view_step))
       loss_acc = 0
       accuracy_acc = 0 
+
+print(type(tstLabels))
+batch_size = tstLabels.size
+batch_ids = np.random.choice(tstLabels.shape[0], batch_size)
+batch_data = torch.from_numpy(tstData[batch_ids])
+batch_labels = torch.from_numpy(tstLabels[batch_ids])
+batch_data = batch_data.cuda()
+batch_labels = batch_labels.cuda()
+outputs = model(batch_data)
+max_scores, pred_labels = torch.max(outputs, 1)
+accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(batch_size)
+print ('Test Accuracy: {:.4f}' .format(accuracy_acc))
