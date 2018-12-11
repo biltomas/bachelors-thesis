@@ -25,7 +25,8 @@ def loadData(data_path, batch):
         train_dataset,
         batch_size=batch,
         num_workers=0,
-        shuffle=True
+        shuffle=True,
+        drop_last=True
     )
     # print(train_loader)
     return train_loader
@@ -80,7 +81,7 @@ class VGGNet(nn.Module):
         self.layer3 = VGGBlock(input_channels=base_channels*2, 
                                layer_count=2, filter_count=base_channels*4)
         
-        self.fc1 = nn.Linear(4*4*base_channels*16, 256)
+        self.fc1 = nn.Linear(4*4*base_channels*4, 256)
         self.fc2 = nn.Linear(256, num_classes)
         # print('in: ')
         # print(4*4*base_channels*4)
@@ -115,7 +116,7 @@ test_path = 'D:\Downloads\Dataset\\test'
 # tstData = torch.tensor
 # tstLabels = torch.tensor
 
-for batch_idx, (data, target) in enumerate(loadData(data_path, 49)):
+for batch_idx, (data, target) in enumerate(loadData(data_path, 30)):
     if batch_idx == 0:
         trnData = data
         trnLabels = target
@@ -125,7 +126,7 @@ for batch_idx, (data, target) in enumerate(loadData(data_path, 49)):
     # print(batch_idx)
     # print(trnData.size())
 
-for batch_idx, (data, target) in enumerate(loadData(test_path, 32)):
+for batch_idx, (data, target) in enumerate(loadData(test_path, 40)):
     if batch_idx == 0:
         tstData = data
         tstLabels = target
@@ -175,16 +176,16 @@ model = VGGNet(base_channels=8, num_classes=int(trnLabels.max()+1))
 model = model.cuda()
 
 batch_size =  30
-view_step = 1
+view_step = 100
 
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 loss_acc = 0
 accuracy_acc = 0
-for i in range(100):
+for i in range(200):
   batch_ids = np.random.choice(trnLabels.shape[0], batch_size)
-#   print(batch_ids)
+  print(batch_ids)
 #   batch_data = torch.from_numpy(trnData[batch_ids].transpose(0, 3, 1, 2))
   batch_data = torch.from_numpy(trnData[batch_ids])
 #   print(batch_data.shape)
@@ -212,14 +213,28 @@ for i in range(100):
       loss_acc = 0
       accuracy_acc = 0 
 
-print(type(tstLabels))
-batch_size = tstLabels.size
-batch_ids = np.random.choice(tstLabels.shape[0], batch_size)
-batch_data = torch.from_numpy(tstData[batch_ids])
-batch_labels = torch.from_numpy(tstLabels[batch_ids])
-batch_data = batch_data.cuda()
-batch_labels = batch_labels.cuda()
-outputs = model(batch_data)
-max_scores, pred_labels = torch.max(outputs, 1)
-accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(batch_size)
+
+test_batch_size = 40
+tstLabels_split = np.split(tstLabels, 17)
+tstData_split = np.split(tstData, 17)
+
+# print((tstLabels_split[0]))
+
+for i in range(len(tstData_split)):
+    temp_acc = 0.0
+    batch_data = torch.from_numpy(tstData_split[i])
+    batch_labels = torch.from_numpy(tstLabels_split[i])
+    batch_data = batch_data.cuda()
+    batch_labels = batch_labels.cuda()
+    outputs = model(batch_data)
+    # print(outputs)
+    max_scores, pred_labels = torch.max(outputs, 1)
+    # print(pred_labels)
+
+    accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
+    temp_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
+    print ('Test batch Accuracy: {:.4f}' .format(temp_acc))
+    # total_acc += accuracy_acc
+
+accuracy_acc = accuracy_acc/len(tstData_split)
 print ('Test Accuracy: {:.4f}' .format(accuracy_acc))
