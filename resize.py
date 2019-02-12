@@ -18,6 +18,6 @@ def delete(data_path):
         if not item.endswith(".png"):
             os.remove(os.path.join(data_path, item))
 
-data_path = 'D:\Downloads\\Dataset\\test\\1\\'
+data_path = 'D:\learning_data\\train\\1\\'
 resize(data_path, 256, 256)
 # delete(data_path)

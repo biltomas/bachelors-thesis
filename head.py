@@ -105,8 +105,8 @@ torch.set_default_tensor_type('torch.cuda.FloatTensor')
 print(torch.cuda.is_available())
 print(torch.__version__)
 # trnData, tstData, trnLabels, tstLabels = readCIFAR()
-data_path = 'D:\Downloads\Dataset\\train'
-test_path = 'D:\Downloads\Dataset\\test'
+data_path = 'D:\learning_data\\train'
+test_path = 'D:\learning_data\\test'
 # trnData, tstData, trnLabels = loadData()
 # data_iter = iter(loadData(data_path, 49))
 # test_iter = iter(loadData(test_path, 32))
@@ -126,7 +126,7 @@ for batch_idx, (data, target) in enumerate(loadData(data_path, 30)):
     # print(batch_idx)
     # print(trnData.size())
 
-for batch_idx, (data, target) in enumerate(loadData(test_path, 40)):
+for batch_idx, (data, target) in enumerate(loadData(test_path, 24)):
     if batch_idx == 0:
         tstData = data
         tstLabels = target
@@ -176,16 +176,17 @@ model = VGGNet(base_channels=8, num_classes=int(trnLabels.max()+1))
 model = model.cuda()
 
 batch_size =  30
-view_step = 100
+view_step = 1
 
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 loss_acc = 0
 accuracy_acc = 0
+curve = []
 for i in range(200):
   batch_ids = np.random.choice(trnLabels.shape[0], batch_size)
-  print(batch_ids)
+#   print(batch_ids)
 #   batch_data = torch.from_numpy(trnData[batch_ids].transpose(0, 3, 1, 2))
   batch_data = torch.from_numpy(trnData[batch_ids])
 #   print(batch_data.shape)
@@ -208,15 +209,15 @@ for i in range(200):
   loss_acc += loss.item()
 
   if i % view_step == view_step-1:
-      print ('Iteration {}, Loss: {:.4f} Accuracy: {:.4f}' 
-             .format(i, loss_acc / view_step, accuracy_acc / view_step))
-      loss_acc = 0
-      accuracy_acc = 0 
+    print ('Iteration {}, Loss: {:.4f} Accuracy: {:.4f}' .format(i, loss_acc / view_step, accuracy_acc / view_step))
+    curve.append(accuracy_acc / view_step)
+    loss_acc = 0
+    accuracy_acc = 0 
 
 
-test_batch_size = 40
-tstLabels_split = np.split(tstLabels, 17)
-tstData_split = np.split(tstData, 17)
+test_batch_size = 24
+tstLabels_split = np.split(tstLabels, 12)
+tstData_split = np.split(tstData, 12)
 
 # print((tstLabels_split[0]))
 
@@ -238,3 +239,5 @@ for i in range(len(tstData_split)):
 
 accuracy_acc = accuracy_acc/len(tstData_split)
 print ('Test Accuracy: {:.4f}' .format(accuracy_acc))
+plt.plot(curve)
+plt.show()
