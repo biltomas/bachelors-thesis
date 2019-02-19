@@ -87,7 +87,6 @@ class VGGNet(nn.Module):
         # print(4*4*base_channels*4)
         
     def forward(self, x):
-        # print("first layer")
         out = self.layer1(x)
         # print("second layer")
         out = self.layer2(out)
