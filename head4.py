@@ -69,7 +69,7 @@ class VGGBlock(nn.Module):
       return out      
 
 class VGGNet(nn.Module):
-    def __init__(self, base_channels=8, num_classes=10):
+    def __init__(self, base_channels=8, num_classes=6):
         super(VGGNet, self).__init__()
         
         self.layer1 = VGGBlock(input_channels=3, 
@@ -100,8 +100,8 @@ class VGGNet(nn.Module):
     
         # print("out layer")
         out = out.reshape(out.size(0), -1)
-        print('out: ')
-        print(out.size())
+        # print('out: ')
+        # print(out.size())
         out = self.fc1(out)
         out = self.fc2(out)
         return out
@@ -121,7 +121,7 @@ test_path = 'D:\learning_data\\test'
 # tstData = torch.tensor
 # tstLabels = torch.tensor
 
-test_batch_size = 12
+test_batch_size = 30
 train_batch_size = 30
 
 for batch_idx, (data, target) in enumerate(loadData(data_path, train_batch_size)):
@@ -192,7 +192,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 loss_acc = 0
 accuracy_acc = 0
 curve = []
-for i in range(300):
+for i in range(1500):
   batch_ids = np.random.choice(trnLabels.shape[0], batch_size)
 #   print(batch_ids)
 #   batch_data = torch.from_numpy(trnData[batch_ids].transpose(0, 3, 1, 2))
@@ -239,13 +239,14 @@ for i in range(len(tstData_split)):
     max_scores, pred_labels = torch.max(outputs, 1)
     print(max_scores)
     print(pred_labels)
+    print(test_batch_size)
 
-    accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size*2)
-    temp_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size*2)
+    accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
+    temp_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
     print ('Test batch Accuracy: {:.4f}' .format(temp_acc))
     # total_acc += accuracy_acc
 
 accuracy_acc = accuracy_acc/len(tstData_split)
 print ('Test Accuracy: {:.4f}' .format(accuracy_acc))
 plt.plot(curve)
-# plt.show()
+plt.show()

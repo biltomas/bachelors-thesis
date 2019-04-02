@@ -6,7 +6,7 @@ import msvcrt
 import os
 import sys
 
-#pouzitie: python myRayCast.py <cesta k dicom priecinku> <zaciatocne cislo pocitadla pre mena suborov>
+#pouzitie: python XRayGenerator.py D:\Downloads\SMIR_191_20190218_141259\SMIR.Head.060Y.F.CT.191 D:\results
 
 
 zoom = 1
@@ -38,7 +38,7 @@ def keyPressed(obj,event):
     # up, down, left, right == move camera or rotate
     # s == shift mode from move to rotate and back
     # r == render, for now only into one folder
-    if key == "Up" or key == "Down" or key == "Left" or key == "Right":
+    if key == "Up" or key == "Down" or key == "Left" or key == "Right" or key =="g":
         lastXYpos = interactionRenderer.GetLastEventPosition()
         lastX = lastXYpos[0]
         lastY = lastXYpos[1]
@@ -134,6 +134,51 @@ def keyPressed(obj,event):
         counter += 1
         writer.Write()
 
+    elif key == "g":
+        counter = 0
+        while counter<46:
+            # Rotate(renderer,renderer.GetActiveCamera(),x,lastY,lastX,lastY,centerX,centerY)
+            if counter == 0:
+                camera.Azimuth(0)
+            elif counter <= 10:
+                camera.Azimuth(1)
+            elif counter <= 15:
+                camera.Azimuth(2)
+            elif counter <= 31:
+                camera.Azimuth(20)
+            elif counter <= 36:
+                camera.Azimuth(2)
+            elif counter <= 45:
+                camera.Azimuth(1)
+
+            renderWindow.Render()
+
+            if counter <= 5:
+                string = str(0)
+            elif counter <= 10:
+                string = str(1)
+            elif counter <= 15:
+                string = str(2)
+            elif counter <= 30:
+                string = str(3)
+            elif counter <= 35:
+                string = str(4)
+            elif counter <= 40:
+                string = str(5)
+            elif counter <= 45:
+                string = str(6)
+            
+            windowToImageFilter = vtk.vtkWindowToImageFilter()
+            windowToImageFilter.SetInput(renderWindow)
+            windowToImageFilter.Update()
+            writer = vtk.vtkPNGWriter()
+            if not os.path.exists(save_directory+"/"+string):
+                os.makedirs(save_directory+"/"+string)
+            writer.SetFileName(save_directory+"/"+string+"/"+filename + str(counter) +".png")
+            writer.SetInputConnection(windowToImageFilter.GetOutputPort())
+            counter += 1
+            writer.Write()
+
     #znizenie jasu
     elif key == "1":
         color_level+=0.05
@@ -199,6 +244,9 @@ def Rotate(renderer, camera, x, y, lastX, lastY, centerX, centerY):
     camera.Azimuth(lastX-x)
     camera.Elevation(lastY-y)
     camera.OrthogonalizeViewUp()
+    print(x)
+    print(y)
+    print("rotace")
 
 cwd = os.path.dirname(os.path.abspath(__file__))
 os.chdir(cwd)
@@ -223,6 +271,8 @@ interactionRenderer.AddObserver("KeyPressEvent",keyPressed)
 print("nacteni")
 PathDicom=str(sys.argv[1])
 print(PathDicom)
+filename = os.path.basename(PathDicom)
+print(filename)
 reader = vtk.vtkDICOMImageReader()
 reader.SetDirectoryName(PathDicom)
 reader.Update()

@@ -18,6 +18,20 @@ def delete(data_path):
         if not item.endswith(".png"):
             os.remove(os.path.join(data_path, item))
 
-data_path = 'D:\learning_data\\train\\1\\'
-resize(data_path, 256, 256)
+# data_path = 'D:\Downloads\\3471833\RawImage\RawImage\TrainingData'
+# resize(data_path, 256, 256)
+data_path = 'D:\learning_data2\\train\\0\\'
+resize(data_path, 224, 224)
+data_path = 'D:\learning_data2\\train\\1\\'
+resize(data_path, 224, 224)
+data_path = 'D:\learning_data2\\train\\2\\'
+resize(data_path, 224, 224)
+data_path = 'D:\learning_data2\\train\\3\\'
+resize(data_path, 224, 224)
+data_path = 'D:\learning_data2\\train\\4\\'
+resize(data_path, 224, 224)
+data_path = 'D:\learning_data2\\train\\5\\'
+resize(data_path, 224, 224)
+data_path = 'D:\learning_data2\\train\\6\\'
+resize(data_path, 224, 224)
 # delete(data_path)

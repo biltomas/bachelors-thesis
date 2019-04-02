@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import sys
+from skimage.transform import resize
 
 def readData(data_path, batch):
     train_dataset = torchvision.datasets.ImageFolder(

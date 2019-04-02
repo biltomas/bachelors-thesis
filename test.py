@@ -1,8 +1,35 @@
-def test(tstLabels, tstData, model):
-    tstLabels_split = np.split(tstLabels, 1)
-    tstData_split = np.split(tstData, 1)
+import torch
+import torch.nn.functional as F
 
-    # print((tstLabels_split[0]))
+from loadData import loadData
+
+from torch import nn
+from torch import utils
+import pickle
+import os
+import torchvision
+from os import path
+accelerator = 'cu90' if path.exists('/opt/bin/nvidia-smi') else 'cpu'
+
+import matplotlib.pyplot as plt
+
+import numpy as np
+
+import sys
+from torchvision import models
+
+def test(tstLabels, tstData, model):
+    print(type(tstData))
+    tstLabels_split = np.split(tstLabels, 3)
+    tstData_split = np.split(tstData, 3)
+    accuracy_acc = 0
+    test_batch_size = len(tstLabels_split[0])
+
+    # tstLabels_split = tstLabels
+    # tstData_split = tstData
+
+    print(len(tstLabels_split))
+    # print(test_batch_size)
 
     for i in range(len(tstData_split)):
         temp_acc = 0.0
@@ -15,9 +42,8 @@ def test(tstLabels, tstData, model):
         max_scores, pred_labels = torch.max(outputs, 1)
         # print(max_scores)
         # print(pred_labels)
-
-        accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size*2)
-        temp_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size*2)
+        accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
+        temp_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
         # print ('Test batch Accuracy: {:.4f}' .format(temp_acc))
         # total_acc += accuracy_acc
 
