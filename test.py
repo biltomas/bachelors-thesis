@@ -17,6 +17,7 @@ import numpy as np
 
 import sys
 from torchvision import models
+import datetime
 
 def test(tstLabels, tstData, model):
     print(type(tstData))
@@ -49,4 +50,7 @@ def test(tstLabels, tstData, model):
 
     accuracy_acc = accuracy_acc/len(tstData_split)
     print ('Test Accuracy: {:.4f}' .format(accuracy_acc))
+    time = datetime.datetime.now()
+    path = r'C:\\Users\\tomas\\Documents\\bp\\bp2018\\model\\' + time.strftime("%m-%d-%Y-%H-%M-%S") + '.pth'
+    torch.save(model, path)
     return accuracy_acc

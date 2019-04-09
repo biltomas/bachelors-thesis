@@ -5,6 +5,8 @@ from loadData import loadData
 
 from torch import nn
 from torch import utils
+from test import test
+
 import pickle
 import os
 import torchvision
@@ -188,7 +190,7 @@ batch_size =  30
 view_step = 1
 
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.00005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
 
 loss_acc = 0
 accuracy_acc = 0
@@ -220,5 +222,6 @@ for i in range(10000):
     loss_acc = 0
     accuracy_acc = 0 
 
+test(tstLabels, tstData, model)
 plt.plot(curve)
 plt.show()

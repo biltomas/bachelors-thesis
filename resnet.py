@@ -21,7 +21,7 @@ from torchvision import models
 
 trnData, trnLabels, tstData, tstLabels = loadData()
 
-model = models.resnet18(pretrained=True).cuda()
+model = models.resnet34(pretrained=True).cuda()
 batch_size =  30
 view_step = 1
 
@@ -31,7 +31,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
 loss_acc = 0
 accuracy_acc = 0
 curve = []
-for i in range(1000):
+for i in range(1250):
   batch_ids = np.random.choice(trnLabels.shape[0], batch_size)
   batch_data = torch.from_numpy(trnData[batch_ids])
   batch_labels = torch.from_numpy(trnLabels[batch_ids])

@@ -5,6 +5,7 @@ import os
 import torchvision
 import torch
 from os import path
+from test import test
 accelerator = 'cu90' if path.exists('/opt/bin/nvidia-smi') else 'cpu'
 
 
@@ -187,12 +188,12 @@ batch_size =  30
 view_step = 1
 
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
 
 loss_acc = 0
 accuracy_acc = 0
 curve = []
-for i in range(1500):
+for i in range(2000):
   batch_ids = np.random.choice(trnLabels.shape[0], batch_size)
 #   print(batch_ids)
 #   batch_data = torch.from_numpy(trnData[batch_ids].transpose(0, 3, 1, 2))
@@ -223,30 +224,31 @@ for i in range(1500):
     accuracy_acc = 0 
 
 
-tstLabels_split = np.split(tstLabels, 1)
-tstData_split = np.split(tstData, 1)
+# tstLabels_split = np.split(tstLabels, 1)
+# tstData_split = np.split(tstData, 1)
 
 # print((tstLabels_split[0]))
 
-for i in range(len(tstData_split)):
-    temp_acc = 0.0
-    batch_data = torch.from_numpy(tstData_split[i])
-    batch_labels = torch.from_numpy(tstLabels_split[i])
-    batch_data = batch_data.cuda()
-    batch_labels = batch_labels.cuda()
-    outputs = model(batch_data)
-    print(outputs)
-    max_scores, pred_labels = torch.max(outputs, 1)
-    print(max_scores)
-    print(pred_labels)
-    print(test_batch_size)
+# for i in range(len(tstData_split)):
+#     temp_acc = 0.0
+#     batch_data = torch.from_numpy(tstData_split[i])
+#     batch_labels = torch.from_numpy(tstLabels_split[i])
+#     batch_data = batch_data.cuda()
+#     batch_labels = batch_labels.cuda()
+#     outputs = model(batch_data)
+#     print(outputs)
+#     max_scores, pred_labels = torch.max(outputs, 1)
+#     print(max_scores)
+#     print(pred_labels)
+#     print(test_batch_size)
 
-    accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
-    temp_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
-    print ('Test batch Accuracy: {:.4f}' .format(temp_acc))
-    # total_acc += accuracy_acc
+#     accuracy_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
+#     temp_acc += torch.sum(pred_labels == batch_labels).item() / float(test_batch_size)
+#     print ('Test batch Accuracy: {:.4f}' .format(temp_acc))
+#     # total_acc += accuracy_acc
 
-accuracy_acc = accuracy_acc/len(tstData_split)
-print ('Test Accuracy: {:.4f}' .format(accuracy_acc))
+# accuracy_acc = accuracy_acc/len(tstData_split)
+# print ('Test Accuracy: {:.4f}' .format(accuracy_acc))
+test(tstLabels, tstData, model)
 plt.plot(curve)
 plt.show()
