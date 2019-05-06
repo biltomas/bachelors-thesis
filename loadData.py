@@ -33,10 +33,10 @@ def readData(data_path, batch):
     return train_loader
 
 def loadData ():
-    data_path = 'D:\learning_data\\train'
-    test_path = 'D:\learning_data\\test'
+    data_path = 'D:\learning_data2\\train'
+    test_path = 'D:\learning_data2\\test'
 
-    test_batch_size = 12
+    test_batch_size = 10
     train_batch_size = 30
 
     for batch_idx, (data, target) in enumerate(readData(data_path, train_batch_size)):

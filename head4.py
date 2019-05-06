@@ -188,12 +188,12 @@ batch_size =  30
 view_step = 1
 
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 loss_acc = 0
 accuracy_acc = 0
 curve = []
-for i in range(2000):
+for i in range(15000):
   batch_ids = np.random.choice(trnLabels.shape[0], batch_size)
 #   print(batch_ids)
 #   batch_data = torch.from_numpy(trnData[batch_ids].transpose(0, 3, 1, 2))

@@ -190,12 +190,13 @@ batch_size =  30
 view_step = 1
 
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.00005)
 
 loss_acc = 0
 accuracy_acc = 0
 curve = []
-for i in range(10000):
+curve1 = []
+for i in range(7000):
   batch_ids = np.random.choice(trnLabels.shape[0], batch_size)
   batch_data = torch.from_numpy(trnData[batch_ids])
   batch_labels = torch.from_numpy(trnLabels[batch_ids])
@@ -218,10 +219,19 @@ for i in range(10000):
 
   if i % view_step == view_step-1:
     print ('Iteration {}, Loss: {:.4f} Accuracy: {:.4f}' .format(i, loss_acc / view_step, accuracy_acc / view_step))
-    curve.append(accuracy_acc / view_step)
+    curve.append(test(tstLabels, tstData, model) / view_step)
+    curve1.append(loss_acc / view_step)
     loss_acc = 0
     accuracy_acc = 0 
 
-test(tstLabels, tstData, model)
+plt.subplot(211)
 plt.plot(curve)
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.title('Accuracy')
+plt.subplot(212)
+plt.plot(curve1)
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Loss')
 plt.show()
